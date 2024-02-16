@@ -4,7 +4,8 @@
       <div class="font-bold mb-6">Upload Video</div>
 
       <!-- Upload Dropbox -->
-      <div *ngIf="!nextStep; else uploadFormCtr"
+      <ng-container *ngIf="!nextStep; else uploadFormCtr">
+      <div
         app-event-blocker
         (dragend)="isDragover = false"
         (dragenter)="isDragover = true"
@@ -20,6 +21,8 @@
           hover:bg-indigo-400 hover:border-indigo-400 hover:border-solid text-xl">
         <h5>Drop your file here (mp4 only!)</h5>
       </div>
+      <input type="file" (change)="storeFile($event)">
+      </ng-container>
 
       <!-- Video Editor -->
       <ng-template #uploadFormCtr>

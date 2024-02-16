@@ -1,8 +1,8 @@
-import { Component,OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/compat/storage';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { v4 as uuid } from 'uuid';
-import { last,switchMap } from 'rxjs/operators';
+import { last, switchMap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app'
 import { ClipService } from 'src/app/services/clip.service';
@@ -26,30 +26,30 @@ export class UploadComponent implements OnDestroy {
   user: firebase.User | null = null
   task?: AngularFireUploadTask
 
-  title = new FormControl('',[
-  Validators.required,
-  Validators.minLength(3)
+  title = new FormControl('', [
+    Validators.required,
+    Validators.minLength(3)
   ])
   uploadForm = new FormGroup({
-    title : this.title
+    title: this.title
   })
 
   ngOnDestroy(): void {
-      this.task?.cancel()
+    this.task?.cancel()
   }
 
   constructor(private storage: AngularFireStorage,
     private auth: AngularFireAuth,
-    private clipService: ClipService){
-      auth.user.subscribe(user => this.user = user)
-     }
+    private clipService: ClipService) {
+    auth.user.subscribe(user => this.user = user)
+  }
 
-  storeFile($event: Event){
+  storeFile($event: Event) {
     this.isDragover = false
-    this.file = ($event as DragEvent).dataTransfer ? 
-    ($event as DragEvent).dataTransfer?.files.item(0) ?? null : 
-    ($event.target as HTMLInputElement).files?.item(0) ?? null
-    if(!this.file || this.file.type != 'video/mp4'){
+    this.file = ($event as DragEvent).dataTransfer ?
+      ($event as DragEvent).dataTransfer?.files.item(0) ?? null :
+      ($event.target as HTMLInputElement).files?.item(0) ?? null
+    if (!this.file || this.file.type != 'video/mp4') {
       return
     }
 
@@ -59,7 +59,7 @@ export class UploadComponent implements OnDestroy {
     this.nextStep = true
   }
 
-  uploadFile(){
+  uploadFile() {
     this.uploadForm.disable()
 
     this.showAlert = true
@@ -75,15 +75,15 @@ export class UploadComponent implements OnDestroy {
     const clipRef = this.storage.ref(clipPath)
 
     this.task.percentageChanges().subscribe(progress => {
-      this.percentage = progress as number /100
+      this.percentage = progress as number / 100
     })
 
     this.task.snapshotChanges().pipe(
       last(),
-      switchMap(()=> clipRef.getDownloadURL())
+      switchMap(() => clipRef.getDownloadURL())
     ).subscribe({
       next: (url) => {
-        const clip = { 
+        const clip = {
           uid: this.user?.uid as string,
           displayName: this.user?.displayName as string,
           title: this.title.value,

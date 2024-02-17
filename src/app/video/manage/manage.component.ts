@@ -12,6 +12,8 @@ import { ModalService } from 'src/app/services/modal.service';
 export class ManageComponent implements OnInit{
   videoOrder = '1';
   clips: IClip[] = []
+  activeClip: IClip | null = null
+
   ngOnInit(): void {
       this.route.queryParams.subscribe((params: Params) => {
         this.videoOrder = params['sort'] === '2' ? params['sort'] : 1;
@@ -45,6 +47,7 @@ export class ManageComponent implements OnInit{
   openModal($event: Event,clip: IClip){
     $event.preventDefault()
 
+    this.activeClip = clip
     this.modal.toggleModal('editClip')
   }
 }
